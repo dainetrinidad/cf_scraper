@@ -8,18 +8,12 @@ build_folder = "build/"
 
 def get_wishlist(wishlist_id):
     '''Grab Wishlist'''
-    if os.path.isfile(temp_folder + wishlist_id + '_wishlist.html'):
-        print("Reading " + wishlist_id + "_wishlist.html")
-        f = open(temp_folder + wishlist_id + '_wishlist.html')
-        wishlist_html = f.read()
-    else:
-        print("Wishlist File doesn't exist, downloading from the web...")
-        response = urllib.request.urlopen(
-            "https://confoo.ca/en/yvr2017/wishlist/"+wishlist_id)
-        wishlist_file = response.read()
-        f = open(temp_folder + wishlist_id + '_wishlist.html', 'wb+')
-        f.write(wishlist_file)
-        wishlist_html = f.read()
+    if not os.path.isfile(temp_folder + wishlist_id + '_wishlist.html'):
+        download_file(wishlist_id)
+
+    print("Reading " + wishlist_id + "_wishlist.html")
+    f = open(temp_folder + wishlist_id + '_wishlist.html')
+    wishlist_html = f.read()
 
     try:
         from BeautifulSoup import BeautifulSoup
@@ -33,9 +27,18 @@ def get_wishlist(wishlist_id):
         session_id = item['id'].split('_')[1]
         analyst_list.append(str(session_id))
 
-    print("Wishlist for", wishlist_id, analyst_list)
+    # print("Wishlist for", wishlist_id, analyst_list)
 
     return analyst_list
+
+def download_file(wishlist_id):
+    print("Wishlist File doesn't exist, downloading from the web...")
+    response = urllib.request.urlopen(
+        "https://confoo.ca/en/yvr2017/wishlist/"+wishlist_id)
+    wishlist_file = response.read()
+    f = open(temp_folder + wishlist_id + '_wishlist.html', 'wb+')
+    f.write(wishlist_file)
+    wishlist_html = f.read()
 
 def delete_file(filename):
     try:
@@ -50,16 +53,17 @@ if not os.path.exists(temp_folder):
 if not os.path.exists(build_folder):
     os.makedirs(build_folder)
 
-if os.path.isfile(temp_folder + 'schedule.html'):
-    print("Reading schedule.html")
-    f = open(temp_folder + 'schedule.html')
-    schedules_html = f.read()
-else:
+if not os.path.isfile(temp_folder + 'schedule.html'):
     print("File doesn't exist, downloading from the web...")
     response = urllib.request.urlopen("https://confoo.ca/en/yvr2017/schedule")
     schedules = response.read()
     f = open(temp_folder + 'schedule.html', 'wb+')
     f.write(schedules)
+    schedules_html = f.read()
+
+if os.path.isfile(temp_folder + 'schedule.html'):
+    print("Reading schedule.html")
+    f = open(temp_folder + 'schedule.html')
     schedules_html = f.read()
 
 # Grab wishlists
@@ -117,3 +121,6 @@ f.write(combined_schedules_html)
 # Copy css and js
 shutil.copyfile('cf_person.css', build_folder + 'cf_person.css')
 shutil.copyfile('cf_schedule.js', build_folder + 'cf_schedule.js')
+
+# Delete temp temp_folder
+shutil.rmtree("temp/")
