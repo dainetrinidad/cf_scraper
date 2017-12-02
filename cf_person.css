@@ -1,0 +1,37 @@
+@media (min-width: 991px) { /* md+ */
+  div.schedule-day div.room,
+  div.schedule-day div.slot {
+    width: 19%;
+  }
+}
+.attendance{
+  text-align: center;
+}
+.person {
+  border: 1px solid #666;
+  color: white;
+  width: 22px;
+  height: 22px;
+  padding: 2px;
+  margin: 2px;
+  display: inline-block;
+  font-size: 8pt;
+}
+
+.dt {
+  background-color: #90b1ef;
+}
+
+.rp {
+  background-color: #e2a0a0;
+}
+
+.kf {
+  background-color: #8abb8a;
+}
+
+.cc, .ws, .xs {
+  background-color: white;
+  color: #d6d6d6;
+  border: 1px solid #d6d6d6;
+}
